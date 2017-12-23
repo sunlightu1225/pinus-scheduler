@@ -1,6 +1,6 @@
 {
 	"name": "pomelo-scheduler",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"author": "XiaogangZhang <zhang0925@gmail.com>, fantasyni <fantasyni@163.com>",
 	"main": "./dist/schedule",
 	"types": "./dist/schedule.d.ts",

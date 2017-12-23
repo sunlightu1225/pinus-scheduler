@@ -20,7 +20,7 @@ var accuracy = 10;
 /**
  * Schedule a new Job
  */
-function scheduleJob(trigger, jobFunc, jobData)
+function scheduleJob(trigger, jobFunc, jobData ?: any)
 {
     var job = Job.createJob(trigger, jobFunc, jobData);
     var excuteTime = job.excuteTime();
