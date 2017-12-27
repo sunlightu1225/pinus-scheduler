@@ -1,10 +1,10 @@
-# pomelo-scheduler
-pomelo-schedule is a schedule tool for nodejs, it's purpose is to provide a product level schedule module which is high efficient and can support large number job schedule.You can 
+# pinus-scheduler
+pinus-schedule is a schedule tool for nodejs, it's purpose is to provide a product level schedule module which is high efficient and can support large number job schedule.You can 
 
 As a schedule tool, it support two kinds of trigger: A simple trigger which use a js object and  a Cron time trigger which use a Cron time string.
 ##Installation
 ```
-npm install pomelo-schedule
+npm install pinus-schedule
 ```
 ##Schedule simple Job
 Simple job will receive a object as a trigger, which take three attributes, a JS function as object, and an object as the parameters in the job.
@@ -87,7 +87,7 @@ Cron trigger has 7 fiels, the format is very like the cronTab in linux, only add
 "15 15 15 10 10 *"   Fire at Octorber 10th, at 15:15:15.
 
 ###Special characters
-Pomelo-schedule allow three kinds of spechial characters, they are '-', '/' and '.'.
+Pinus-schedule allow three kinds of spechial characters, they are '-', '/' and '.'.
 
 -: '-' means range. For example, 1-3 in the second field means the seconds 1, 2 and 3
 
