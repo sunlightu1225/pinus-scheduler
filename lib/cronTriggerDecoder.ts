@@ -1,31 +1,31 @@
 import { isArray } from "util";
 
 
-var timer = {
-    second: -1,
-    min: -1,
-    hour: -1,
-    dom: -1,
-    month: -1,
-    dow: -1,
-    executeTime: -1
+interface Timer{
+    second: number | number[],
+    min: number | number[],
+    hour: number | number[],
+    dom: number | number[],
+    month: number | number[],
+    dow: number | number[],
+    executeTime: number | number[]
 }
 
-var limit = [[0, 59], [0, 59], [0, 24], [1, 31], [1, 12], [0, 6]];
+let limit = [[0, 59], [0, 59], [0, 24], [1, 31], [1, 12], [0, 6]];
 
-function nexExcuteTime(time, timer)
+function nexExcuteTime(time: number, timer: Timer = {second: -1, min: -1, hour: -1, dom: -1, month: -1, dow: -1, executeTime: -1})
 {
     //add 1s to the time so it must be the next time
     time += 1000;
-    var date = new Date(time);
-    //var nextTime = new Date(time);
+    let date = new Date(time);
+    //let nextTime = new Date(time);
 
     outmost:
     while (true)
     {
         if (!timeMatch(date.getMonth(), timer.month))
         {
-            var nextMonth = nextTime(date.getMonth(), timer.month);
+            let nextMonth = nextTime(date.getMonth(), timer.month);
             if (nextMonth < date.getMonth())
             {
                 date.setFullYear(date.getFullYear() + 1);
@@ -42,7 +42,7 @@ function nexExcuteTime(time, timer)
         {
             do
             {
-                var nextDom = nextTime(date.getDate(), timer.dom);
+                let nextDom = nextTime(date.getDate(), timer.dom);
 
                 //If the date is in the next month, add month
                 if (nextDom <= date.getDate())
@@ -50,9 +50,9 @@ function nexExcuteTime(time, timer)
                     date.setMonth(date.getMonth() + 1);
                     continue outmost;
                 }
-                // TODO : ÕâÀïÓÐbug
+                // TODO : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bug
                 ////If the date exceed the limit, add month
-                //var domLimit = getDomLimit();
+                //let domLimit = getDomLimit();
                 //if (nexDom > domLimit)
                 //{
                 //    date.setMonth(date.getMonth() + 1);
@@ -69,7 +69,7 @@ function nexExcuteTime(time, timer)
 
         if (!timeMatch(date.getHours(), timer.hour))
         {
-            var nextHour = nextTime(date.getHours(), timer.hour);
+            let nextHour = nextTime(date.getHours(), timer.hour);
 
             if (nextHour <= date.getHours())
             {
@@ -82,9 +82,9 @@ function nexExcuteTime(time, timer)
             date.setSeconds(0);
         }
 
-        if (!timeMatch(date.getMinutes(), timer.minute))
+        if (!timeMatch(date.getMinutes(), timer.min))
         {
-            var nextMinute = nextTime(date.getMinutes(), timer.minute);
+            let nextMinute = nextTime(date.getMinutes(), timer.min);
 
             if (nextMinute <= date.getMinutes())
             {
@@ -96,9 +96,9 @@ function nexExcuteTime(time, timer)
             date.setSeconds(0);
         }
 
-        if (!timeMatch(date.getSeconds(), timer.seconde))
+        if (!timeMatch(date.getSeconds(), timer.second))
         {
-            var nextSecond = nextTime(date.getSeconds(), timer.seconde);
+            let nextSecond = nextTime(date.getSeconds(), timer.second);
 
             if (nextSecond <= date.getSeconds())
             {
@@ -118,7 +118,7 @@ function nexExcuteTime(time, timer)
 /**
  * return the next match time of the given value
  */
-function nextTime(value, cronTime)
+function nextTime(value: number, cronTime: number | Array<number>)
 {
     if (typeof (cronTime) == 'number')
     {
@@ -128,11 +128,11 @@ function nextTime(value, cronTime)
             return cronTime;
     } else if (isArray(cronTime))
     {
-        var arr = cronTime;
+        let arr = cronTime;
         if (value < arr[0] || value > arr[arr.length - 1])
             return arr[0];
 
-        for (var i = 0; i < arr.length; i++)
+        for (let i = 0; i < arr.length; i++)
             if (value < arr[i])
                 return arr[i];
     }
@@ -140,7 +140,7 @@ function nextTime(value, cronTime)
     return null;
 }
 
-function timeMatch(value, cronTime)
+function timeMatch(value: number, cronTime: number | Array<number>)
 {
     if (typeof(cronTime) == 'number')
     {
@@ -151,11 +151,11 @@ function timeMatch(value, cronTime)
         return false;
     } else if (isArray(cronTime))
     {
-        var arr = cronTime;
+        let arr = cronTime;
         if (value < arr[0] || value > arr[arr.length - 1])
             return false;
 
-        for (var i = 0; i < arr.length; i++)
+        for (let i = 0; i < arr.length; i++)
             if (value == arr[i])
                 return true;
 
@@ -165,23 +165,23 @@ function timeMatch(value, cronTime)
     return null;
 }
 
-function getDomLimit(year, month)
+function getDomLimit(year: number, month: number)
 {
-    var date = new Date(year, month, 0);
+    let date = new Date(year, month, 0);
 
     return date.getDate();
 }
 
-export function decodeCronTime(cronTime)
+export function decodeCronTime(cronTime: string)
 {
-    var timers = cronTime.split(/\s+/);
+    let timers = cronTime.split(/\s+/) as Array<any>;
 
     if (timers.length != 6)
     {
         return null;
     }
 
-    for (var i = 0; i < timers.length; i++)
+    for (let i = 0; i < timers.length; i++)
     {
         timers[i] = (decodeTimeStr(timers[i]));
 
@@ -194,20 +194,21 @@ export function decodeCronTime(cronTime)
     return timers;
 }
 
-function decodeTimeStr(timeStr)
+function decodeTimeStr(timeStr: any)
 {
-    var result = {};
-    var arr = [];
+    let result: {[key: number]: string} = {};
+    let arr = [];
+    let time = '';
 
     if (timeStr == '*')
     {
         return -1;
     } else if (timeStr.search(',') > 0)
     {
-        var timeStrArray = timeStr.split(',');
-        for (var i = 0; i < timeStrArray.length; i++)
+        let timeStrArray = timeStr.split(',');
+        for (let i = 0; i < timeStrArray.length; i++)
         {
-            var time = timeStrArray[i];
+            time = timeStrArray[i];
             if (time.match(/^\d+-\d+$/))
             {
                 decodeRangeTime(result, time);
@@ -227,7 +228,7 @@ function decodeTimeStr(timeStr)
         return null;
     }
 
-    for (var key in result)
+    for (let key in result)
         arr.push(result[key]);
 
     arr.sort();
@@ -235,17 +236,17 @@ function decodeTimeStr(timeStr)
     return arr;
 }
 
-function decodeRangeTime(map, timeStr)
+function decodeRangeTime(map: {[key: number]: any}, timeStr: any): void
 {
-    var times = timeStr.split('-');
+    let times = timeStr.split('-');
 
     if (times[0] > times[1])
         return null;
-    for (var i = times[0]; i <= times[1]; i++)
+    for (let i = <number>times[0]; i <= <number>times[1]; i++)
         map[i] = i;
 }
 
-function checkNum(nums, min, max)
+function checkNum(nums: any, min: number, max: number): boolean
 {
     if (nums == null)
         return false;
@@ -253,7 +254,7 @@ function checkNum(nums, min, max)
     if (nums == -1)
         return true;
 
-    for (var i = 0; i < nums.length; i++)
+    for (let i = 0; i < nums.length; i++)
     {
         if (nums[i] < min || nums[i] > max)
             return false;

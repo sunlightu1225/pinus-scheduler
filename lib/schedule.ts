@@ -3,36 +3,36 @@
  */
 import * as PriorityQueue from './priorityQueue';
 import * as Job from './job';
-var timerCount = 0;
+let timerCount = 0;
 
-var logger = require('log4js').getLogger(__filename);
+let logger = require('log4js').getLogger(__filename);
 
-var map = {};
-var queue = PriorityQueue.createPriorityQueue(comparator);
+let map: {[key:number]: Job.Job} = {};
+let queue = PriorityQueue.createPriorityQueue(comparator);
 
-var jobId = 0;
-var timer;
+let jobId = 0;
+let timer: any;
 
 //The accuracy of the scheduler, it will affect the performance when the schedule tasks are
 //crowded together
-var accuracy = 10;
+let accuracy = 10;
 
 /**
  * Schedule a new Job
  */
-function scheduleJob(trigger, jobFunc, jobData ?: any)
+function scheduleJob(trigger: string&object, jobFunc: Function, jobData ?: any)
 {
-    var job = Job.createJob(trigger, jobFunc, jobData);
-    var excuteTime = job.excuteTime();
-    var id = job.id;
+    let job: Job.Job = Job.createJob(trigger, jobFunc, jobData);
+    let excuteTime = job.excuteTime();
+    let id = job.id;
 
     map[id] = job;
-    var element = {
+    let element = {
         id: id,
         time: excuteTime
     };
 
-    var curJob = queue.peek();
+    let curJob = queue.peek();
     if (!curJob || excuteTime < curJob.time)
     {
         queue.offer(element);
@@ -48,9 +48,9 @@ function scheduleJob(trigger, jobFunc, jobData ?: any)
 /**
  * Cancel Job
  */
-function cancelJob(id)
+function cancelJob(id:number)
 {
-    var curJob = queue.peek();
+    let curJob = queue.peek();
     if (curJob && id === curJob.id)
     { // to avoid queue.peek() is null
         queue.pop();
@@ -69,7 +69,7 @@ function cancelJob(id)
  * @param job The job need to schedule
  * @return void
  */
-function setTimer(job)
+function setTimer(job: Job.Job)
 {
     clearTimeout(timer);
 
@@ -81,15 +81,15 @@ function setTimer(job)
  */
 function excuteJob()
 {
-    var job = peekNextJob();
-    var nextJob;
+    let job = peekNextJob();
+    let nextJob;
 
     while (!!job && (job.excuteTime() - Date.now()) < accuracy)
     {
         job.run();
         queue.pop();
 
-        var nextTime = job.nextTime();
+        let nextTime = job.nextTime();
 
         if (nextTime === null)
         {
@@ -118,7 +118,7 @@ function peekNextJob()
     if (queue.size() <= 0)
         return null;
 
-    var job = null;
+    let job = null;
 
     do
     {
@@ -135,18 +135,18 @@ function peekNextJob()
  */
 function getNextJob()
 {
-    var job = null;
+    let job = null;
 
     while (!job && queue.size() > 0)
     {
-        var id = queue.pop().id;
+        let id = queue.pop().id;
         job = map[id];
     }
 
     return (!!job) ? job : null;
 }
 
-function comparator(e1, e2)
+function comparator(e1: {time: number}, e2: {time: number})
 {
     return e1.time > e2.time;
 }

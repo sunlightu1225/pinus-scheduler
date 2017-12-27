@@ -3,14 +3,17 @@
  */
 export class PriorityQueue
 {
+    _comparator: Function;
+    _queue: Array<any>;
+    _tailPos: number;
 
-    constructor(comparator)
+    constructor(comparator: Function)
     {
         this.init(comparator);
     }
 
 
-    init = function (comparator)
+    init(comparator: Function)
     {
         this._comparator = typeof (comparator) == 'function' ? comparator : this._defaultComparator;
 
@@ -22,7 +25,7 @@ export class PriorityQueue
      * Return the size of the pirority queue
      * @return PirorityQueue size
      */
-    size = function ()
+    size()
     {
         return this._tailPos;
     };
@@ -31,18 +34,18 @@ export class PriorityQueue
      * Insert an element to the queue
      * @param element The element to insert
      */
-    offer = function (element)
+    offer(element: {id:number, time: number})
     {
-        var queue = this._queue;
-        var compare = this._comparator;
+        let queue = this._queue;
+        let compare = this._comparator;
 
         queue[this._tailPos++] = element;
 
-        var pos = this._tailPos - 1;
+        let pos = this._tailPos - 1;
 
         while (pos > 0)
         {
-            var parentPos = (pos % 2 == 0) ? (pos / 2 - 1) : (pos - 1) / 2;
+            let parentPos = (pos % 2 == 0) ? (pos / 2 - 1) : (pos - 1) / 2;
             if (compare(queue[parentPos], element))
             {
                 queue[pos] = queue[parentPos];
@@ -60,22 +63,22 @@ export class PriorityQueue
      * Get and remove the first element in the queue
      * @return The first element
      */
-    pop = function ()
+    pop()
     {
-        var queue = this._queue;
-        var compare = this._comparator;
+        let queue = this._queue;
+        let compare = this._comparator;
 
         if (this._tailPos == 0)
             return null;
 
 
-        var headNode = queue[0];
+        let headNode = queue[0];
 
-        var tail = queue[this._tailPos - 1];
+        let tail = queue[this._tailPos - 1];
 
-        var pos = 0;
-        var left = pos * 2 + 1;
-        var right = left + 1;
+        let pos = 0;
+        let left = pos * 2 + 1;
+        let right = left + 1;
         queue[pos] = tail;
         this._tailPos--;
 
@@ -109,20 +112,20 @@ export class PriorityQueue
      * Get but not remove the first element in the queue
      * @return The first element
      */
-    peek = function ()
+    peek()
     {
         if (this._tailPos == 0)
             return null;
         return this._queue[0];
     }
 
-    _defaultComparator = function (a, b)
+    _defaultComparator = function (a: number, b: number)
     {
         return a > b;
     }
 }
 
-export function createPriorityQueue(comparator)
+export function createPriorityQueue(comparator: Function)
 {
     return new PriorityQueue(comparator);
 }

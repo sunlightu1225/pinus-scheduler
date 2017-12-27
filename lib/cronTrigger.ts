@@ -3,16 +3,16 @@
  */
 import { getLogger } from 'log4js';
 import { Job } from './job';
-var logger = getLogger(__filename);
+let logger = getLogger(__filename);
 
-var SECOND = 0;
-var MIN = 1;
-var HOUR = 2;
-var DOM = 3;
-var MONTH = 4;
-var DOW = 5;
+let SECOND = 0;
+let MIN = 1;
+let HOUR = 2;
+let DOM = 3;
+let MONTH = 4;
+let DOW = 5;
 
-var Limit = [
+let Limit = [
     [0, 59],
     [0, 59],
     [0, 24],
@@ -24,13 +24,13 @@ var Limit = [
 export class CronTrigger
 {
     trigger: any;
-    nextTime: Date;
+    nextTime: number;
     job: Job;
     /**
      * The constructor of the CronTrigger
      * @param trigger The trigger str used to build the cronTrigger instance
      */
-    constructor(trigger, job: Job)
+    constructor(trigger: string, job: Job)
     {
         this.trigger = this.decodeTrigger(trigger);
 
@@ -43,7 +43,7 @@ export class CronTrigger
     /**
      * Get the current excuteTime of trigger
      */
-    excuteTime = function ()
+    excuteTime()
     {
         return this.nextTime;
     };
@@ -53,14 +53,14 @@ export class CronTrigger
      * @param The given time point
      * @return The nearest valid time after the given time point
      */
-    nextExcuteTime = function (time)
+    nextExcuteTime(time: number)
     {
         //add 1s to the time so it must be the next time
         time = !!time ? time : this.nextTime;
         time += 1000;
 
-        var cronTrigger = this.trigger;
-        var date = new Date(time);
+        let cronTrigger = this.trigger;
+        let date = new Date(time);
         date.setMilliseconds(0);
 
         outmost: while (true)
@@ -72,7 +72,7 @@ export class CronTrigger
             }
             if (!timeMatch(date.getMonth(), cronTrigger[MONTH]))
             {
-                var nextMonth = nextCronTime(date.getMonth(), cronTrigger[MONTH]);
+                let nextMonth = nextCronTime(date.getMonth(), cronTrigger[MONTH]);
 
                 if (nextMonth == null)
                     return null;
@@ -97,11 +97,11 @@ export class CronTrigger
 
             if (!timeMatch(date.getDate(), cronTrigger[DOM]) || !timeMatch(date.getDay(), cronTrigger[DOW]))
             {
-                var domLimit = getDomLimit(date.getFullYear(), date.getMonth());
+                let domLimit = getDomLimit(date.getFullYear(), date.getMonth());
 
                 do
                 {
-                    var nextDom = nextCronTime(date.getDate(), cronTrigger[DOM]);
+                    let nextDom = nextCronTime(date.getDate(), cronTrigger[DOM]);
                     if (nextDom == null)
                         return null;
 
@@ -126,7 +126,7 @@ export class CronTrigger
 
             if (!timeMatch(date.getHours(), cronTrigger[HOUR]))
             {
-                var nextHour = nextCronTime(date.getHours(), cronTrigger[HOUR]);
+                let nextHour = nextCronTime(date.getHours(), cronTrigger[HOUR]);
 
                 if (nextHour <= date.getHours())
                 {
@@ -144,7 +144,7 @@ export class CronTrigger
 
             if (!timeMatch(date.getMinutes(), cronTrigger[MIN]))
             {
-                var nextMinute = nextCronTime(date.getMinutes(), cronTrigger[MIN]);
+                let nextMinute = nextCronTime(date.getMinutes(), cronTrigger[MIN]);
 
                 if (nextMinute <= date.getMinutes())
                 {
@@ -160,7 +160,7 @@ export class CronTrigger
 
             if (!timeMatch(date.getSeconds(), cronTrigger[SECOND]))
             {
-                var nextSecond = nextCronTime(date.getSeconds(), cronTrigger[SECOND]);
+                let nextSecond = nextCronTime(date.getSeconds(), cronTrigger[SECOND]);
 
                 if (nextSecond <= date.getSeconds())
                 {
@@ -183,10 +183,10 @@ export class CronTrigger
      * @param cronTimeStr The cronTimeStr need to decode, like "0 12 * * * 3"
      * @return The array to represent the cronTimer
      */
-    decodeTrigger = function (cronTimeStr)
+    decodeTrigger(cronTimeStr: string)
     {
         cronTimeStr = cronTimeStr.trim();
-        var cronTimes = cronTimeStr.split(/\s+/);
+        let cronTimes = <any[]>cronTimeStr.split(/\s+/);
 
         if (cronTimes.length != 6)
         {
@@ -194,7 +194,7 @@ export class CronTrigger
             return null;
         }
 
-        for (var i = 0; i < cronTimes.length; i++)
+        for (let i = 0; i < cronTimes.length; i++)
         {
             cronTimes[i] = (this.decodeTimeStr(cronTimes[i], i));
 
@@ -217,20 +217,20 @@ export class CronTrigger
      * @param timeStr The cron time string, like: 1,2 or 1-3
      * @return A sorted array, like [1,2,3]
      */
-    decodeTimeStr = function (timeStr, type)
+    decodeTimeStr(timeStr: any, type: number)
     {
-        var result = {};
-        var arr = [];
+        let result: {[key:number]: number} = {};
+        let arr = [];
 
         if (timeStr == '*')
         {
             return -1;
         } else if (timeStr.search(',') > 0)
         {
-            var timeArr = timeStr.split(',');
-            for (var i = 0; i < timeArr.length; i++)
+            let timeArr = timeStr.split(',');
+            for (let i = 0; i < timeArr.length; i++)
             {
-                var time = timeArr[i];
+                let time: any = timeArr[i];
                 if (time.match(/^\d+-\d+$/))
                 {
                     decodeRangeTime(result, time);
@@ -239,7 +239,7 @@ export class CronTrigger
                     decodePeriodTime(result, time, type);
                 } else if (!isNaN(time))
                 {
-                    var num = Number(time);
+                    let num = Number(time);
                     result[num] = num;
                 } else
                     return null;
@@ -252,14 +252,14 @@ export class CronTrigger
             decodePeriodTime(result, timeStr, type);
         } else if (!isNaN(timeStr))
         {
-            var num = Number(timeStr);
+            let num = Number(timeStr);
             result[num] = num;
         } else
         {
             return null;
         }
 
-        for (var key in result)
+        for (let key in result)
         {
             arr.push(result[key]);
         }
@@ -279,7 +279,7 @@ export class CronTrigger
  * @param cronTime The cronTime need to match
  * @return The match value or null if unmatch(it offten means an error occur).
  */
-function nextCronTime(value, cronTime)
+function nextCronTime(value: number, cronTime: Array<number>)
 {
     value += 1;
 
@@ -294,7 +294,7 @@ function nextCronTime(value, cronTime)
         if (value <= cronTime[0] || value > cronTime[cronTime.length - 1])
             return cronTime[0];
 
-        for (var i = 0; i < cronTime.length; i++)
+        for (let i = 0; i < cronTime.length; i++)
             if (value <= cronTime[i])
                 return cronTime[i];
     }
@@ -309,7 +309,7 @@ function nextCronTime(value, cronTime)
  * @param cronTime The cronTime
  * @return The match result
  */
-function timeMatch(value, cronTime)
+function timeMatch(value: number, cronTime: Array<number>)
 {
     if (typeof (cronTime) == 'number')
     {
@@ -323,7 +323,7 @@ function timeMatch(value, cronTime)
         if (value < cronTime[0] || value > cronTime[cronTime.length - 1])
             return false;
 
-        for (var i = 0; i < cronTime.length; i++)
+        for (let i = 0; i < cronTime.length; i++)
             if (value == cronTime[i])
                 return true;
 
@@ -338,9 +338,9 @@ function timeMatch(value, cronTime)
  * @param map The decode map
  * @param timeStr The range string, like 2-5
  */
-function decodeRangeTime(map, timeStr)
+function decodeRangeTime(map: {[key: number]: number}, timeStr: string): void
 {
-    var times = timeStr.split('-');
+    let times = <any[]>timeStr.split('-');
 
     times[0] = Number(times[0]);
     times[1] = Number(times[1]);
@@ -350,7 +350,7 @@ function decodeRangeTime(map, timeStr)
         return null;
     }
 
-    for (var i = times[0]; i <= times[1]; i++)
+    for (let i = times[0]; i <= times[1]; i++)
     {
         map[i] = i;
     }
@@ -359,19 +359,19 @@ function decodeRangeTime(map, timeStr)
 /**
  * Compute the period timer
  */
-function decodePeriodTime(map, timeStr, type)
+function decodePeriodTime(map: {[key: number]: number}, timeStr: string, type: number)
 {
-    var times = timeStr.split('/');
-    var min = Limit[type][0];
-    var max = Limit[type][1];
+    let times = timeStr.split('/');
+    let min = Limit[type][0];
+    let max = Limit[type][1];
 
-    var remind = Number(times[0]);
-    var period = Number(times[1]);
+    let remind = Number(times[0]);
+    let period = Number(times[1]);
 
     if (period == 0)
         return;
 
-    for (var i = remind; i <= max; i += period)
+    for (let i = remind; i <= max; i += period)
     {
         // if (i % period == remind)
         map[i] = i;
@@ -386,7 +386,7 @@ function decodePeriodTime(map, timeStr, type)
  * @param max Maximam value
  * @return If all the numbers are in the data range
  */
-function checkNum(nums, min, max)
+function checkNum(nums: any, min: number, max: number)
 {
     if (nums == null)
         return false;
@@ -394,7 +394,7 @@ function checkNum(nums, min, max)
     if (nums == -1)
         return true;
 
-    for (var i = 0; i < nums.length; i++)
+    for (let i = 0; i < nums.length; i++)
     {
         if (nums[i] < min || nums[i] > max)
             return false;
@@ -409,9 +409,9 @@ function checkNum(nums, min, max)
  * @month The given month
  * @return The date count of given month
  */
-function getDomLimit(year, month)
+function getDomLimit(year: number, month: number)
 {
-    var date = new Date(year, month + 1, 0);
+    let date = new Date(year, month + 1, 0);
 
     return date.getDate();
 }
@@ -421,7 +421,7 @@ function getDomLimit(year, month)
  * @param trigger The Cron Trigger string
  * @return The Cron trigger
  */
-export function createTrigger(trigger, job)
+export function createTrigger(trigger: string, job: Job)
 {
     return new CronTrigger(trigger, job);
 }

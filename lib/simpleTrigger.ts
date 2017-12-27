@@ -3,18 +3,18 @@ import { Job } from "./job";
 /**
  * This is the tirgger that use an object as trigger.
  */
-var SKIP_OLD_JOB = false;
+let SKIP_OLD_JOB = false;
 
 /**
  * The constructor of simple trigger
  */
 export class SimpleTrigger 
 {
-    nextTime: Date;
+    nextTime: number; //Date token
     period: number;
     count: number;
     job: Job;
-    constructor(trigger, job)
+    constructor(trigger: {start?:number, period?:number, count?:number}, job: Job)
     {
         this.nextTime = (!!trigger.start) ? trigger.start : Date.now();
 
@@ -30,7 +30,7 @@ export class SimpleTrigger
     /**
      * Get the current excuteTime of rigger
      */
-    excuteTime = function ()
+    excuteTime()
     {
         return this.nextTime;
     };
@@ -39,9 +39,9 @@ export class SimpleTrigger
      * Get the next excuteTime of the trigger, and set the trigger's excuteTime
      * @return Next excute time
      */
-    nextExcuteTime = function ()
+    nextExcuteTime()
     {
-        var period = this.period;
+        let period = this.period;
 
         if ((this.count > 0 && this.count <= this.job.runTime) || period <= 0)
             return null;
@@ -59,7 +59,7 @@ export class SimpleTrigger
 /**
  * Create Simple trigger
  */
-export function createTrigger(trigger, job)
+export function createTrigger(trigger: {start?:number, period?:number, count?:number}, job: Job)
 {
     return new SimpleTrigger(trigger, job);
 }

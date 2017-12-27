@@ -4,20 +4,20 @@
 import * as cronTrigger from './cronTrigger';
 import * as simpleTrigger from './simpleTrigger';
 
-var jobId = 1;
+let jobId = 1;
 
-var SIMPLE_JOB = 1;
-var CRON_JOB  = 2;
-var jobCount = 0;
+let SIMPLE_JOB = 1;
+let CRON_JOB  = 2;
+let jobCount = 0;
 
-var warnLimit = 500;
+let warnLimit = 500;
 
 import { getLogger } from 'log4js'
-var logger = getLogger(__filename);
+let logger = getLogger(__filename);
 
 
 //For test
-var lateCount = 0;
+let lateCount = 0;
 
 export class Job
 {
@@ -28,7 +28,7 @@ export class Job
     id: number;
     runTime: number;
 
-    constructor(trigger, jobFunc, jobData)
+    constructor(trigger: string&object, jobFunc: Function, jobData: any)
     {
         this.data = (!!jobData) ? jobData : null;
         this.func = jobFunc;
@@ -50,13 +50,13 @@ export class Job
     /**
      * Run the job code
      */
-    run = function ()
+    run()
     {
         try
         {
             jobCount++;
             this.runTime++;
-            var late = Date.now() - this.excuteTime();
+            let late = Date.now() - this.excuteTime();
             if (late > warnLimit)
                 logger.warn('run Job count ' + jobCount + ' late :' + late + ' lateCount ' + (++lateCount));
             this.func(this.data);
@@ -69,12 +69,12 @@ export class Job
     /**
      * Compute the next excution time
      */
-    nextTime = function ()
+    nextTime()
     {
         return this.trigger.nextExcuteTime();
     };
 
-    excuteTime = function ()
+    excuteTime()
     {
         return this.trigger.excuteTime();
     };
@@ -86,6 +86,6 @@ export class Job
  * @param jobDate The date the job use
  * @return The new instance of the give job or null if fail
  */
-export function createJob(trigger, jobFunc, jobData){
+export function createJob(trigger: string&object, jobFunc: Function, jobData: any){
   return new Job(trigger, jobFunc, jobData);
 }
