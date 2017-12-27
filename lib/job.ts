@@ -28,7 +28,7 @@ export class Job
     id: number;
     runTime: number;
 
-    constructor(trigger: string&object, jobFunc: Function, jobData: any)
+    constructor(trigger: simpleTrigger.SimpleTrigger | string, jobFunc: Function, jobData: any)
     {
         this.data = (!!jobData) ? jobData : null;
         this.func = jobFunc;
@@ -86,6 +86,6 @@ export class Job
  * @param jobDate The date the job use
  * @return The new instance of the give job or null if fail
  */
-export function createJob(trigger: string&object, jobFunc: Function, jobData: any){
+export function createJob(trigger: simpleTrigger.SimpleTrigger | string, jobFunc: Function, jobData: any){
   return new Job(trigger, jobFunc, jobData);
 }

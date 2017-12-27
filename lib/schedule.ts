@@ -3,6 +3,8 @@
  */
 import * as PriorityQueue from './priorityQueue';
 import * as Job from './job';
+import * as simpleTrigger from './simpleTrigger';
+
 let timerCount = 0;
 
 let logger = require('log4js').getLogger(__filename);
@@ -19,8 +21,12 @@ let accuracy = 10;
 
 /**
  * Schedule a new Job
+ * @param trigger The trigger to use
+ * @param jobFunc The function the job to run
+ * @param jobData The data the job use
+ * @return The job id, which can be canceled by cancelJob(id:number)
  */
-function scheduleJob(trigger: string&object, jobFunc: Function, jobData ?: any)
+function scheduleJob<T>(trigger: simpleTrigger.SimpleTrigger | string, jobFunc: (data?: T) => void, jobData?: T): number
 {
     let job: Job.Job = Job.createJob(trigger, jobFunc, jobData);
     let excuteTime = job.excuteTime();
@@ -48,7 +54,7 @@ function scheduleJob(trigger: string&object, jobFunc: Function, jobData ?: any)
 /**
  * Cancel Job
  */
-function cancelJob(id:number)
+function cancelJob(id:number): boolean
 {
     let curJob = queue.peek();
     if (curJob && id === curJob.id)
