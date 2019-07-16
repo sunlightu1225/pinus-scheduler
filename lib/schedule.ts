@@ -129,7 +129,7 @@ function peekNextJob()
     do
     {
         job = map[queue.peek().id];
-        if (!job) queue.pop();
+        //if (!job) queue.pop();  ***** not remove
     } while (!job && queue.size() > 0);
 
     return (!!job) ? job : null;
